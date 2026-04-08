@@ -33,7 +33,7 @@ A simple and functional To-Do List app built with React.
    http://localhost:3000
 
 ## Live Demo
-Coming soon...
+https://to-do-app-lake-three.vercel.app/
 
 ## Author
 Palak Sa - [@PalakSa08](https://github.com/PalakSa08)
