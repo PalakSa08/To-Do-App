@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './App.css';
 import { FaTrash, FaEdit, FaCheckCircle, FaSyncAlt } from 'react-icons/fa';
 
-
 function App() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
@@ -26,11 +25,9 @@ function App() {
   };
 
   const handleToggleComplete = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, complete: !todo.complete } : todo
-      )
-    );
+    setTodos(todos.map((todo) =>
+      todo.id === id ? { ...todo, complete: !todo.complete } : todo
+    ));
   };
 
   const handleDelete = (id) => {
@@ -38,11 +35,9 @@ function App() {
   };
 
   const handleToggleImportant = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, important: !todo.important } : todo
-      )
-    );
+    setTodos(todos.map((todo) =>
+      todo.id === id ? { ...todo, important: !todo.important } : todo
+    ));
   };
 
   const handleEdit = (id, name) => {
@@ -51,11 +46,9 @@ function App() {
   };
 
   const handleUpdate = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, name: editText } : todo
-      )
-    );
+    setTodos(todos.map((todo) =>
+      todo.id === id ? { ...todo, name: editText } : todo
+    ));
     setEditingId(null);
     setEditText('');
   };
@@ -88,45 +81,37 @@ function App() {
   const importantTasks = todos.filter((t) => t.important).length;
 
   return (
-    <div className="App" style={{ fontFamily: 'Arial', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+    <div className="App">
       <h2>To-Do List</h2>
 
       {/* Input and Add Task */}
-      <div style={{ marginBottom: '20px' }}>
+      <div className="input-row">
         <input
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
           placeholder="Enter To-Do"
-          style={{ padding: '10px', width: '70%' }}
         />
-        <button onClick={handleAddTodo} style={{ padding: '10px 15px', marginLeft: '10px' }}>
-          + Add Task
-        </button>
+        <button onClick={handleAddTodo}>+ Add Task</button>
       </div>
 
       {/* Search */}
       <input
         type="text"
+        className="search-input"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search Tasks..."
-        style={{ padding: '8px', width: '100%', marginBottom: '10px' }}
       />
 
       {/* Filter Buttons */}
-      <div style={{ marginBottom: '20px' }}>
+      <div className="filter-buttons">
         {['All', 'Pending', 'Completed', 'Important'].map((cat) => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            style={{
-              marginRight: '10px',
-              padding: '8px 12px',
-              backgroundColor: filter === cat ? '#61dafb' : '#eee',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            className={filter === cat ? 'active' : ''}
           >
             {cat}
           </button>
@@ -134,31 +119,20 @@ function App() {
       </div>
 
       {/* Task List */}
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul>
+        {filteredTodos.length === 0 && (
+          <p className="empty-state">No tasks found. Add one above! 🎉</p>
+        )}
         {filteredTodos.map((todo) => (
-          <li
-            key={todo.id}
-            style={{
-              padding: '10px',
-              marginBottom: '10px',
-              backgroundColor: '#f9f9f9',
-              borderRadius: '5px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+          <li key={todo.id} className="todo-item">
+            <div className="todo-left">
               <FaCheckCircle
                 onClick={() => handleToggleImportant(todo.id)}
-                style={{
-                  marginRight: '10px',
-                  color: todo.important ? 'green' : '#ccc',
-                  cursor: 'pointer',
-                }}
+                style={{ color: todo.important ? 'green' : '#ccc', cursor: 'pointer' }}
               />
               {editingId === todo.id ? (
                 <input
+                  className="edit-input"
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   onBlur={() => handleUpdate(todo.id)}
@@ -167,25 +141,21 @@ function App() {
                 />
               ) : (
                 <span
+                  className={`todo-text ${todo.complete ? 'completed' : ''}`}
                   onClick={() => handleToggleComplete(todo.id)}
-                  style={{
-                    textDecoration: todo.complete ? 'line-through' : 'none',
-                    color: todo.complete ? '#888' : '#000',
-                    cursor: 'pointer',
-                  }}
                 >
                   {todo.name}
                 </span>
               )}
             </div>
-            <div>
+            <div className="todo-actions">
               <FaEdit
+                className="edit-icon"
                 onClick={() => handleEdit(todo.id, todo.name)}
-                style={{ cursor: 'pointer', marginRight: '10px' }}
               />
               <FaTrash
+                className="delete-icon"
                 onClick={() => handleDelete(todo.id)}
-                style={{ cursor: 'pointer', color: 'red' }}
               />
             </div>
           </li>
@@ -193,16 +163,18 @@ function App() {
       </ul>
 
       {/* Bottom Controls */}
-      <div style={{ marginTop: '30px' }}>
-        <button onClick={handleRefresh} style={{ marginRight: '10px', padding: '8px' }}>
+      <div className="bottom-controls">
+        <button onClick={handleRefresh}>
           <FaSyncAlt /> Refresh
         </button>
-        <button onClick={handleClearCompleted} style={{ padding: '8px' }}>
+        <button onClick={handleClearCompleted}>
           Clear Completed
         </button>
-        <div style={{ marginTop: '15px' }}>
-          <p>Total: {totalTasks} | Pending: {pendingTasks} | Important: {importantTasks}</p>
-        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="stats">
+        <p>Total: {totalTasks} | Pending: {pendingTasks} | Important: {importantTasks}</p>
       </div>
     </div>
   );
